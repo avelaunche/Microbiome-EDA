@@ -131,3 +131,30 @@ ggplot(df, aes(x = Clostridioides.difficile)) +
     x = "C. Difficle"
   )
 
+
+ggplot(filter(df, visit_name == "Day 28"), aes(x = Clostridioides.difficile)) +
+  geom_histogram() +
+  facet_wrap(~ trt) + 
+  labs(
+    title = "Comparing C. Difficile Distributions on Day 28 Across Treament Groups",
+    y = "Count",
+    x = "C. Difficle"
+  )
+
+ggplot(filter(df, visit_name == "Day 56"), aes(x = Clostridioides.difficile)) +
+  geom_histogram() +
+  facet_wrap(~ trt) + 
+  labs(
+    title = "Comparing C. Difficile Distributions on Day 56 Across Treament Groups",
+    y = "Count",
+    x = "C. Difficle"
+  )
+
+ggplot(filter(df, visit_name == "Day 168"), aes(x = Clostridioides.difficile)) +
+  geom_histogram() +
+  facet_wrap(~ trt) + 
+  labs(
+    title = "Comparing C. Difficile Distributions on Day 168 Across Treament Groups",
+    y = "Count",
+    x = "C. Difficle"
+  )

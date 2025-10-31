@@ -1,3 +1,6 @@
+library(tidyverse)
+
+set.seed(125)
 sam_subset$sample = rownames(sam_subset)
 microbiomedata_t$sample = rownames(microbiomedata_t)
 
@@ -8,7 +11,7 @@ microbiomedata_t$sample = NULL
 colnames(df_f)[1:30]
 nrow(df_f)
 nrow(filter(df_f, visit_name != "Day 1" & visit_name != "Day 168"))
-df_f = filter(df_f, visit_name != "Day 1" | visit_name != "Day 168")
+df_f = filter(df_f, visit_name != "Day 1" & visit_name != "Day 168")
 df_f = df_f[, -c(1:9)]
 colnames(df_f)[1:30]
 
@@ -106,17 +109,20 @@ sv_importance(shp, kind = "beeswarm")
 
 pred_prob <- predict(xgb_model, X_test, type = "prob")
 
-pred_prob
-
 pred_rocr <- prediction(pred_prob, y_test)
 
-# Calculate TPR/FPR for ROC
 perf_roc <- performance(pred_rocr, measure = "tpr", x.measure = "fpr")
 
-# Plot the ROC curve
 plot(perf_roc, col = "blue", lwd = 2)
+
+plot(perf_roc_NULL, col = "red", lwd = 2, add = TRUE)
+
+legend("bottomright",
+       legend = c("Model", "Null model"),
+       col = c("blue", "red"),
+       lwd = 2)
 abline(a = 0, b = 1, lty = 2, col = "gray")
-title("ROC Curve for XGBoost Model")
+title("ROC Curve for Null vs Control XGBoost Model")
 
 # Calculate AUC
 auc_perf <- performance(pred_rocr, measure = "auc")
