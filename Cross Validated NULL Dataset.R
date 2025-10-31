@@ -136,3 +136,22 @@ ggplot(best_importance, aes(Gain, fct_reorder(as.factor(Feature), Gain), fill = 
   theme_bw() + 
   theme(legend.position = "off")
 
+
+pred_prob <- predict(xgb_model, X_test, type = "prob")
+
+pred_prob
+
+pred_rocr <- prediction(pred_prob, y_test)
+
+# Calculate TPR/FPR for ROC
+perf_roc <- performance(pred_rocr, measure = "tpr", x.measure = "fpr")
+
+# Plot the ROC curve
+plot(perf_roc, col = "blue", lwd = 2)
+abline(a = 0, b = 1, lty = 2, col = "gray")
+title("ROC Curve for NULL Model")
+
+# Calculate AUC
+auc_perf <- performance(pred_rocr, measure = "auc")
+auc_value <- auc_perf@y.values[[1]]
+auc_value

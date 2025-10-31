@@ -1,23 +1,37 @@
-colnames(df)
+sam_subset$sample = rownames(sam_subset)
+microbiomedata_t$sample = rownames(microbiomedata_t)
 
-df_f = filter(df, visit_name != "Day 1" | visit_name != "Day 168")
+df_f = right_join(sam_subset, microbiomedata_t)
 
-head(colnames(df_f),20)
+microbiomedata_t$sample = NULL
 
+colnames(df_f)[1:30]
+nrow(df_f)
+nrow(filter(df_f, visit_name != "Day 1" & visit_name != "Day 168"))
+df_f = filter(df_f, visit_name != "Day 1" | visit_name != "Day 168")
 df_f = df_f[, -c(1:9)]
+colnames(df_f)[1:30]
 
-df_f
+ncol(df_f)
+nrow(df_f)
 
-row_sums <- apply(df_f, 2, sum)
-over_10 = row_sums[row_sums/nrow(df_f) > 0+1/100]
+microbiomedata_t_count = df_f > 0
+row_sums <- apply(microbiomedata_t_count, 2, sum)
+over_10 = row_sums[row_sums/nrow(microbiomedata_t_count) > 0+1/100]
 over_10 = data.frame(over_10)
 over_10 = rownames(over_10)
 a_select = dplyr::select(df_f, all_of(over_10))
 
-a_select <- a_select + 1e-6
-a_select  <- t(apply(a_select, 1, clr))
-a_select = as.data.frame(a_select)
+ncol(a_select)
 
+a2 <- a_select + 1e-6
+a2  <- t(apply(a2, 1, clr))
+a2 = as.data.frame(a2)
+
+a2
+
+a2$CDIFF_PRESENCE = a2$Clostridioides.difficile > 0
+a2 = dplyr::select(a2, -Clostridioides.difficile)
 
 train_index <- createDataPartition(a2$CDIFF_PRESENCE, p = 0.8, list = FALSE)
 train_index

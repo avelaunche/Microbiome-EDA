@@ -2,7 +2,8 @@ library(shapviz)
 library(caret)
 library(xgboost)
 library(compositions)
-library(dplyr)
+library(tidyverse)
+library(ROCR)
 microbiomedata_t_count = microbiomedata_t > 0
 row_sums <- apply(microbiomedata_t_count, 2, sum)
 over_10 = row_sums[row_sums/nrow(microbiomedata_t_count) > 0+1/100]
