@@ -13,7 +13,7 @@ a_select = dplyr::select(microbiomedata_t, all_of(over_10))
 CDIFF_PRESENCE = a_select$Clostridioides.difficile > 0
 a_select <- a_select + 1e-6
 a_select  <- t(apply(a_select, 1, clr))
-a_select = as.data.frame(a_select)
+a2 = as.data.frame(a_select)
 CDIFF_PRESENCE = as.factor(CDIFF_PRESENCE)
 a2$CDIFF_PRESENCE = CDIFF_PRESENCE
 a2 = dplyr::select(a2, -Clostridioides.difficile)
