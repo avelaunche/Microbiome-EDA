@@ -15,23 +15,13 @@ library(ROCR)
 table(sam_subset$Visit.Name)
 length(unique(sam_subset$Subject.Number))
 
-colnames(sam_subset) == rownames(sam_subset)
-
-sam_subset = clean_names(sam_subset)
-
-colnames(sam_subset)
-
-ncol(microbiomedata_t)
-
-a = rownames_to_column(microbiomedata_t) |>
-  left_join(rownames_to_column(sam_sub_sub))
+a = microbiomedata_t
 
 ggplot(a, aes(Clostridioides.difficile, fill = rec_diagnosis)) +
   geom_histogram()
 
 a = dplyr::select(a, -rowname)
 a = dplyr::select(a, -Clostridioides.difficile)
-
 
 str(microbiomedata_t)
 

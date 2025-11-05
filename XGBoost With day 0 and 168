@@ -1,0 +1,169 @@
+# =============================================================
+# Microbiome classification — Cleaned and improved pipeline
+# =============================================================
+
+# Imports
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, roc_auc_score, roc_curve
+import matplotlib.pyplot as plt
+import seaborn as sns
+import shap
+
+# Set plot style
+sns.set(style="whitegrid", context="talk")
+
+# =============================================================
+# Load and prepare data
+# =============================================================
+
+# Load microbiome abundance table (rows = samples, columns = species)
+microbiomedata = pd.read_csv("microbiomedata.csv", index_col=0)
+
+# Define binary outcome: C. difficile presence
+microbiomedata["CDIFF_PRESENCE"] = (
+    microbiomedata["Clostridioides.difficile"] > 0
+).astype(int)
+
+# Split features and labels — remove target and directly related columns
+X_raw = microbiomedata.drop(columns=["CDIFF_PRESENCE", "Clostridioides.difficile"])
+y = microbiomedata["CDIFF_PRESENCE"]
+
+# =============================================================
+# Filter features based on relative abundance
+# (keep taxa with non-negligible counts)
+# =============================================================
+
+row_sums = X_raw.sum(axis=0)
+keep_features = row_sums[row_sums / len(X_raw) > 0.01].index
+X_filtered = X_raw[keep_features]
+
+print(f"Kept {len(keep_features)} taxa out of {X_raw.shape[1]}")
+
+# =============================================================
+# CLR (Centered Log-Ratio) transform — compositional normalization
+# =============================================================
+
+def clr_transform(df):
+    """Centered log ratio transform for compositional data"""
+    A = df.values + 1e-6  # add small pseudocount to avoid zeros
+    geometric_means = np.exp(np.mean(np.log(A), axis=1))
+    clr_values = np.log(A / geometric_means[:, None])
+    return pd.DataFrame(clr_values, index=df.index, columns=df.columns)
+
+X_clr = clr_transform(X_filtered)
+
+# =============================================================
+# Split data into train/test for realistic performance evaluation
+# =============================================================
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X_clr, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# =============================================================
+# Base Random Forest model
+# =============================================================
+
+rf_base = RandomForestClassifier(
+    n_estimators=500,
+    random_state=42,
+    n_jobs=-1
+)
+rf_base.fit(X_train, y_train)
+
+y_pred = rf_base.predict(X_test)
+y_pred_prob = rf_base.predict_proba(X_test)[:, 1]
+
+print(f"Base model accuracy: {accuracy_score(y_test, y_pred):.3f}")
+print(f"Base model ROC AUC: {roc_auc_score(y_test, y_pred_prob):.3f}")
+
+# =============================================================
+# Hyperparameter tuning
+# =============================================================
+
+param_grid = {
+    "max_features": [
+        int(X_train.shape[1] * ratio) for ratio in [0.05, 0.15, 0.25, 0.33, 0.4]
+    ],
+    "min_samples_leaf": [1, 3, 5, 10],
+    "bootstrap": [True, False],
+    "max_samples": [0.5, 0.63, 0.8]
+}
+
+rf_model = RandomForestClassifier(
+    n_estimators=300,
+    random_state=123,
+    n_jobs=-1
+)
+
+grid_search = GridSearchCV(
+    rf_model,
+    param_grid,
+    cv=3,
+    scoring="roc_auc",
+    n_jobs=-1,
+    verbose=1
+)
+grid_search.fit(X_train, y_train)
+
+print("Best parameters:")
+print(grid_search.best_params_)
+best_rf = grid_search.best_estimator_
+
+# Evaluate tuned model
+y_pred_best = best_rf.predict(X_test)
+y_pred_best_prob = best_rf.predict_proba(X_test)[:, 1]
+print(f"Tuned model accuracy: {accuracy_score(y_test, y_pred_best):.3f}")
+print(f"Tuned model ROC AUC: {roc_auc_score(y_test, y_pred_best_prob):.3f}")
+
+# =============================================================
+# ROC Curve
+# =============================================================
+
+fpr, tpr, _ = roc_curve(y_test, y_pred_best_prob)
+plt.figure(figsize=(6, 6))
+plt.plot(fpr, tpr, color="blue", lw=2, label=f"AUC = {roc_auc_score(y_test, y_pred_best_prob):.2f}")
+plt.plot([0, 1], [0, 1], color="gray", linestyle="--")
+plt.xlabel("False Positive Rate")
+plt.ylabel("True Positive Rate")
+plt.title("ROC Curve — Tuned Random Forest")
+plt.legend()
+plt.show()
+
+# =============================================================
+# Feature importance
+# =============================================================
+
+feat_imp = pd.DataFrame({
+    "species": X_train.columns,
+    "importance": best_rf.feature_importances_
+}).sort_values(by="importance", ascending=False)
+
+top_feats = feat_imp.head(25)
+
+plt.figure(figsize=(8, 10))
+sns.barplot(data=top_feats, x="importance", y="species", palette="viridis")
+plt.title("Random Forest Feature Importance — Top 25")
+plt.xlabel("Variable Weight")
+plt.ylabel("Species")
+plt.tight_layout()
+plt.show()
+
+# =============================================================
+# SHAP values for interpretability
+# =============================================================
+
+explainer = shap.TreeExplainer(best_rf)
+shap_values = explainer.shap_values(X_test)
+
+explainer = shap.TreeExplainer(best_rf)
+shap_values = explainer(X_test)
+
+# Some SHAP versions return Explanation objects, some lists → handle both
+try:
+    shap.summary_plot(shap_values[1], X_test, max_display=15)
+except Exception:
+    shap.summary_plot(shap_values, X_test, max_display=15)

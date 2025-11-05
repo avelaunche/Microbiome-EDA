@@ -35,11 +35,25 @@ for (x in colnames(shp_res)){
   r = cor.test(shp_res[,x], shp_feat[,x])
   cor = c(r$estimate, cor)
   p = c(r$p.value, p)
-  if (x == "Eggerthella.lenta"){
-    print(r)
-    print(cor)
-  }
 }
+
+ggplot(data = NULL, aes(x = shp_res[,"Eggerthella.lenta"], y = shp_feat[,"Eggerthella.lenta"])) + 
+  geom_point()
+
+ggplot(data = NULL, aes(x = shp_res[,"Coprobacillus.sp..MP77E8"], y = shp_feat[,"Coprobacillus.sp..MP77E8"])) + 
+  geom_point()
+
+
+
+ggplot(data = NULL, aes(x = shp_res[,"Blautia.sp..Marseille.P3201T"], y = shp_feat[,"Blautia.sp..Marseille.P3201T"])) + 
+  geom_point() + 
+  labs(
+    title = "SHAP result vs. original feature",
+    subtitle = "Blautia.sp..Marseille.P3201T",
+    x = "Shap result (Negative means prediction for false)", 
+    y = "Feature value"
+  )
+
 
 
 significant_species = rev(colnames(shp_res))[!is.na(cor)]
@@ -60,7 +74,7 @@ significant = arrange(significant, desc(cor))
 
 significant
 
-filter(significant, species == "Eggerthella.lenta")
+arrange(significant, p)
 
 #I first tried this with means and with other methods but it just doesnt work because im left dealing with the negatives and stuff.
 #IE even if there is a correlation i cant find a mean because its gonna average out to 0 if its a good fit which obviously doesnt work. 

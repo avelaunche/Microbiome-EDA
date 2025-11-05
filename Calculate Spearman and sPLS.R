@@ -111,3 +111,4 @@ ggplot(spls_select_species, aes(tot, fct_reorder(as.factor(species), tot), fill 
   theme_bw() + 
   theme(legend.position = "off")
 
+write.csv(sam_subset, "metadata.csv")
