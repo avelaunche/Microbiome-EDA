@@ -58,4 +58,11 @@ significant = data.frame(
 
 significant = arrange(significant, desc(cor))
 
+significant
+
 filter(significant, species == "Eggerthella.lenta")
+
+#I first tried this with means and with other methods but it just doesnt work because im left dealing with the negatives and stuff.
+#IE even if there is a correlation i cant find a mean because its gonna average out to 0 if its a good fit which obviously doesnt work. 
+#i also tried sd also didnt wokr for similar reasons ad its just a weird weird way of looking at it rather than spread or something 
+#so in the end correlation was the method i used this took way too long. 
