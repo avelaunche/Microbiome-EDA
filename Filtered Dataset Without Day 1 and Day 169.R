@@ -66,7 +66,6 @@ params <- list(
 )
 
 #Basic xgb_model
-set.seed(123)
 
 xgb_model <- xgb.train(
   params = params,

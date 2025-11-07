@@ -11,22 +11,6 @@ library(compositions)
 library(forcats)
 library(ROCR)
 
-#Classify by outcome
-table(sam_subset$Visit.Name)
-length(unique(sam_subset$Subject.Number))
-
-a = microbiomedata_t
-
-ggplot(a, aes(Clostridioides.difficile, fill = rec_diagnosis)) +
-  geom_histogram()
-
-a = dplyr::select(a, -rowname)
-a = dplyr::select(a, -Clostridioides.difficile)
-
-str(microbiomedata_t)
-
-a$rec_diagnosis = as.factor(a$rec_diagnosis)
-
 b = microbiomedata_t$Clostridioides.difficile > 0
 
 g = data.frame(microbiomedata_t, CDIFF_PRESENCE = b)
@@ -46,7 +30,17 @@ rf_model = randomForest(
 
 rf_model
 
+l = randomForest::importance(rf_model)
+
+arrange(as.data.frame(l), desc(MeanDecreaseAccuracy))
+
 #classification with normalization
+
+row_sums <- apply(microbiomedata_t_count, 2, sum)
+over_10 = row_sums[row_sums/nrow(microbiomedata_t_count) > 0+1/100]
+over_10 = data.frame(over_10)
+over_10 = rownames(over_10)
+a_select = dplyr::select(microbiomedata_t, all_of(over_10))
 a_select <- a_select + 1e-6
 a_select  <- t(apply(a_select, 1, clr))
 a_select = as.data.frame(a_select)
@@ -63,6 +57,10 @@ rf_model_classify_normalize = randomForest(
 )
 
 rf_model_classify_normalize
+
+l = randomForest::importance(rf_model_classify_normalize)
+
+arrange(as.data.frame(l), desc(MeanDecreaseAccuracy))
 
 #classification with rowsums
 

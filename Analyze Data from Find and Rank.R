@@ -43,3 +43,28 @@ ggplot(data = NULL, aes(x = shp_res[, spec], y = shp_feat[, spec])) +
 cor.test(microbiomedata_t$Klebsiella.oxytoca, microbiomedata_t$Clostridioides.difficile, method = "spearman")
 cor.test(microbiomedata_t$X.Clostridium..aldenense, microbiomedata_t$Clostridioides.difficile, method = "spearman")
 cor.test(microbiomedata_t$X.Clostridium..aldenense, microbiomedata_t$Klebsiella.oxytoca, method = "spearman")
+
+spec = "Actinomyces.naeslundii"
+
+g = cbind(microbiomedata_t, CDIFF_PRESENCE)
+g = mutate(g, hi = ifelse(Actinomyces.naeslundii > 0, TRUE, FALSE))
+ggplot(g, aes(CDIFF_PRESENCE, fill = hi)) + 
+  geom_bar(position = "fill")
+
+g = cbind(X_train, as.logical(y_train))
+g = as.data.frame(g)
+g = mutate(g, hi = ifelse(Actinomyces.naeslundii > 0, TRUE, FALSE))
+
+ggplot(g, aes(y_train, fill = hi)) + 
+  geom_bar(position = "fill")
+
+g = cbind(X_test, as.logical(y_test))
+g = as.data.frame(g)
+g = mutate(g, hi = ifelse(Actinomyces.naeslundii > 0, TRUE, FALSE))
+Actinomyces.naeslundii
+ggplot(g, aes(y_test, fill = hi)) + 
+  geom_bar(position = "fill")
+x3
+
+
+shp_res[, "Dialister.invisus"]

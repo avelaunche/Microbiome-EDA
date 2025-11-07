@@ -43,10 +43,7 @@ for (x in colnames(shp_res)){
   p = c(r$p.value, p)
 }
 
-ggplot(data = NULL, aes(x = shp_res[,"Eggerthella.lenta"], y = shp_feat[,"Eggerthella.lenta"])) + 
-  geom_point()
-
-ggplot(data = NULL, aes(x = shp_res[,"Coprobacillus.sp..MP77E8"], y = shp_feat[,"Coprobacillus.sp..MP77E8"])) + 
+ggplot(data = NULL, aes(x = shp_res[,"Klebsiella.pneumoniae"], y = shp_feat[,"Klebsiella.pneumoniae"])) + 
   geom_point()
 
 sum_rows_pos = function(x){
@@ -90,27 +87,11 @@ colnames(x) = c("species","shp_res_neg", "shp_feat_pos")
 x2 = filter(x, shp_res_neg > 0 & shp_feat_pos > 0)
 arrange(x2, desc(shp_res_neg))
 
-spec = "Tyzzerella.sp..MP10F1re"
-filter(x, species == spec)
-
-ggplot(data = NULL, aes(x = shp_res[, spec], y = shp_feat[, spec])) + 
-  geom_point(aes(color = as.factor(shp_res[, spec] < 0 & shp_feat[, spec] > 0)), alpha = 0.6) + 
-  labs(
-    title = "SHAP result vs. original feature",
-    subtitle = spec,
-    x = "Shap result (Negative means prediction for false)", 
-    y = "Feature value", 
-    color = "Legend"
-  ) + 
-  theme_bw() 
-#  geom_smooth(method = "lm", se = FALSE)
-
-
-
 x3 = inner_join(x, neg_significant) |>
   mutate(abs(shp_res_neg/ shp_feat_pos))
 
 arrange(x3, cor)
+
 
 
 #I first tried this with means and with other methods but it just doesnt work because im left dealing with the negatives and stuff.
