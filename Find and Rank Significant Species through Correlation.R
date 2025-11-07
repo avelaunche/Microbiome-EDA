@@ -1,3 +1,7 @@
+library(reshape2)
+library(shapviz)
+library(factoextra)
+
 shp <- shapviz(
   xgb_model,
   X_pred = data.matrix(X_train),
@@ -5,6 +9,8 @@ shp <- shapviz(
 )
 
 shp_res = shp$S
+
+sv_importance(shp, kind = "beeswarm")
 
 shp_res = as.data.frame(shp_res)
 dim(shp_res)
@@ -43,18 +49,13 @@ ggplot(data = NULL, aes(x = shp_res[,"Eggerthella.lenta"], y = shp_feat[,"Eggert
 ggplot(data = NULL, aes(x = shp_res[,"Coprobacillus.sp..MP77E8"], y = shp_feat[,"Coprobacillus.sp..MP77E8"])) + 
   geom_point()
 
+sum_rows_pos = function(x){
+  sum(x > 0)
+}
 
-
-ggplot(data = NULL, aes(x = shp_res[,"Blautia.sp..Marseille.P3201T"], y = shp_feat[,"Blautia.sp..Marseille.P3201T"])) + 
-  geom_point() + 
-  labs(
-    title = "SHAP result vs. original feature",
-    subtitle = "Blautia.sp..Marseille.P3201T",
-    x = "Shap result (Negative means prediction for false)", 
-    y = "Feature value"
-  )
-
-
+sum_rows_neg = function(x){
+  sum(x < 0)
+}
 
 significant_species = rev(colnames(shp_res))[!is.na(cor)]
 significant_cor = cor[!is.na(cor)]
@@ -72,9 +73,45 @@ significant = data.frame(
 
 significant = arrange(significant, desc(cor))
 
+neg_significant = filter(significant, cor < 0)
+
 significant
 
 arrange(significant, p)
+
+shp_res_sum = data.frame(shp_res_neg = apply(shp_res, 2, sum_rows_neg))
+shp_feat_sum = data.frame(shp_feat_pos = apply(shp_feat, 2, sum_rows_pos))
+x = left_join(rownames_to_column(shp_res_sum, var = "rowname"),
+              rownames_to_column(shp_feat_sum, var = "rowname"),
+              by = "rowname")
+
+colnames(x) = c("species","shp_res_neg", "shp_feat_pos")
+
+x2 = filter(x, shp_res_neg > 0 & shp_feat_pos > 0)
+arrange(x2, desc(shp_res_neg))
+
+spec = "Tyzzerella.sp..MP10F1re"
+filter(x, species == spec)
+
+ggplot(data = NULL, aes(x = shp_res[, spec], y = shp_feat[, spec])) + 
+  geom_point(aes(color = as.factor(shp_res[, spec] < 0 & shp_feat[, spec] > 0)), alpha = 0.6) + 
+  labs(
+    title = "SHAP result vs. original feature",
+    subtitle = spec,
+    x = "Shap result (Negative means prediction for false)", 
+    y = "Feature value", 
+    color = "Legend"
+  ) + 
+  theme_bw() 
+#  geom_smooth(method = "lm", se = FALSE)
+
+
+
+x3 = inner_join(x, neg_significant) |>
+  mutate(abs(shp_res_neg/ shp_feat_pos))
+
+arrange(x3, cor)
+
 
 #I first tried this with means and with other methods but it just doesnt work because im left dealing with the negatives and stuff.
 #IE even if there is a correlation i cant find a mean because its gonna average out to 0 if its a good fit which obviously doesnt work. 
