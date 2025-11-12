@@ -49,7 +49,7 @@ pvalue = p.adjust(pvalue)
 cor_df = data.frame("species" = species, "correlation" = corrs, "p_value" = pvalue)
 
 #visualize data
-cor_df |>
+cor_df = cor_df |>
   arrange(p_value)
 
 #look at relevant data only

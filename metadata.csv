@@ -1,4 +1,4 @@
-"","subject_number","visit_name","visit_name_norm","trt","population","abx_group_joined_m","cmindc","rec_diagnosis","sample"
+"","Subject.Number","Visit.Name","Visit.Name.Norm","TRT","Population","Abx.group_joined_M","CMINDC","rec.diagnosis","sample"
 "BK1307423AB",102101,"UNSCHED","Day 70","Placebo High Dose","Recurrent","Vanco_Metro","CDIFF","Bad","BK1307423AB"
 "BI5710804AB",101104,"Day 1","Day 1","VE303 Low Dose","Recurrent","Vanco_Metro","C DIFF","Good","BI5710804AB"
 "BL5001723AB",101101,"Day 168","Day 168","Placebo High Dose","Recurrent","Vanco_Metro","C DIFF","Good","BL5001723AB"

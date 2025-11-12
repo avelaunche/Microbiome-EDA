@@ -1,3 +1,8 @@
+library(compositions)
+library(xgboost)
+library(caret)
+library(shapviz)
+
 sam_subset$sample = rownames(sam_subset)
 microbiomedata_t$sample = rownames(microbiomedata_t)
 
@@ -7,8 +12,8 @@ microbiomedata_t$sample = NULL
 
 colnames(df_f)[1:30]
 nrow(df_f)
-nrow(filter(df_f, visit_name != "Day 1" & visit_name != "Day 168"))
-df_f = filter(df_f, visit_name != "Day 1" & visit_name != "Day 168")
+nrow(filter(df_f, Visit.Name != "Day 1" & Visit.Name != "Day 168"))
+df_f = filter(df_f, Visit.Name != "Day 1" & Visit.Name != "Day 168")
 df_f = df_f[, -c(1:9)]
 colnames(df_f)[1:30]
 
@@ -37,7 +42,9 @@ x4$d = NULL
 
 nrow(x4)
 
-for (x in 1:100){
+for (x in 1:500){
+  print(x)
+  
   set.seed(x)
   train_index <- createDataPartition(a2$CDIFF_PRESENCE, p = 0.8, list = FALSE)
   train_index
@@ -87,6 +94,10 @@ for (x in 1:100){
   
   cor = c()
   p = c()
+  
+  shp_res = shp$S
+  shp_feat = shp$X
+  
   
   for (x in colnames(shp_res)){ 
     r = cor.test(shp_res[,x], shp_feat[,x])

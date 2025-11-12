@@ -1,6 +1,7 @@
 library(reshape2)
 library(shapviz)
 library(factoextra)
+library(tidyverse)
 
 shp <- shapviz(
   xgb_model,
@@ -17,15 +18,6 @@ dim(shp_res)
 
 sum(shp_res$Eggerthella.lenta)
 sum(shp_res$Actinomyces.naeslundii)
-
-abs_mean_shap <- apply(abs(shp_res), 2, mean)
-mean_shap <- colMeans(shp_res)
-
-shap_summary <- data.frame(
-  feature = names(abs_mean_shap),
-  mean_abs = abs_mean_shap,
-  mean_signed = mean_shap
-)
 
 shp_feat = shp$X
 
