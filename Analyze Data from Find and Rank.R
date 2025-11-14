@@ -65,6 +65,8 @@ g = cbind(X_test, as.logical(y_test))
 g = as.data.frame(g)
 g = mutate(g, hi = ifelse(Actinomyces.naeslundii > 0, TRUE, FALSE))
 
+filter(x3, species == "X.Clostridium..aldenense")
+
 ggplot(g, aes(y_test, fill = hi)) + 
   geom_bar(position = "fill")
 x3

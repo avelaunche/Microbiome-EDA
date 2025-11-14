@@ -86,6 +86,7 @@ as.data.frame(final)
 cor.test(microbiomedata_t$Bilophila.wadsworthia, microbiomedata_t$Clostridioides.difficile, method = "spearman")
 
 final
+other
 filter(cor_df, p_value < 0.05 & correlation < 0)
 #So a lot of these highly correlated species are actually super duper sparse and thats why they are so much less present
 sum(microbiomedata_t$Lactobacillus.plantarum > 0)
