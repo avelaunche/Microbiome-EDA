@@ -10,8 +10,8 @@ microbiomedata_t$sample = NULL
 
 colnames(df_f)[1:30]
 nrow(df_f)
-nrow(filter(df_f, visit_name != "Day 1" & visit_name != "Day 168"))
-df_f = filter(df_f, visit_name != "Day 1" & visit_name != "Day 168")
+nrow(filter(df_f, Visit.Name != "Day 1" & Visit.Name != "Day 168"))
+df_f = filter(df_f, Visit.Name != "Day 1" & Visit.Name != "Day 168")
 df_f = df_f[, -c(1:9)]
 colnames(df_f)[1:30]
 

@@ -10,10 +10,13 @@ ggplot(data = NULL, aes(x = shp_res[, spec], y = shp_feat[, spec])) +
     y = "Feature value", 
     color = "Legend"
   ) + 
-  theme_bw() 
+  theme_bw() + 
+  geom_smooth(method = "lm", se = FALSE)
 
-spec = "Klebsiella.oxytoca"
+spec = "X.Clostridium..aldenense"
 filter(x, species == spec)
+
+cor(microbiomedata_t[, spec], microbiomedata_t$Clostridioides.difficile, method = "spearman")
 
 ggplot(data = NULL, aes(x = shp_res[, spec], y = shp_feat[, spec])) + 
   geom_point(aes(color = as.factor(shp_res[, spec] < 0 & shp_feat[, spec] > 0)), alpha = 0.6) + 
@@ -61,7 +64,7 @@ ggplot(g, aes(y_train, fill = hi)) +
 g = cbind(X_test, as.logical(y_test))
 g = as.data.frame(g)
 g = mutate(g, hi = ifelse(Actinomyces.naeslundii > 0, TRUE, FALSE))
-Actinomyces.naeslundii
+
 ggplot(g, aes(y_test, fill = hi)) + 
   geom_bar(position = "fill")
 x3

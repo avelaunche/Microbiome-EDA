@@ -80,7 +80,7 @@ x2 = filter(x, shp_res_neg > 0 & shp_feat_pos > 0)
 arrange(x2, desc(shp_res_neg))
 
 x3 = inner_join(x, neg_significant) |>
-  mutate(abs(shp_res_neg/ shp_feat_pos))
+  mutate(abs(shp_res_neg/shp_feat_pos))
 
 arrange(x3, cor)
 
@@ -90,3 +90,4 @@ arrange(x3, cor)
 #IE even if there is a correlation i cant find a mean because its gonna average out to 0 if its a good fit which obviously doesnt work. 
 #i also tried sd also didnt wokr for similar reasons ad its just a weird weird way of looking at it rather than spread or something 
 #so in the end correlation was the method i used this took way too long. 
+

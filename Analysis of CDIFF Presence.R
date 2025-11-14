@@ -7,9 +7,13 @@ df = right_join(sam_subset, microbiomedata_t)
 
 microbiomedata_t$sample = NULL
 
-df$visit_name = as.factor(df$visit_name)
+df$CDIFF_PRESENCE = as.factor(df$Clostridioides.difficile > 0)
+df$population = df$Population
+df$visit_name = as.factor(df$Visit.Name)
+df$trt = df$TRT
 
 df$visit_name = factor(df$visit_name, levels = c("Screening","Day 1", "Day 7", "Day 14", "Day 28", "Day 56", "Day 168", "UNSCHED"))
+
 
 ggplot(data.frame(df), aes(CDIFF_PRESENCE, fill = population)) + 
   geom_bar()

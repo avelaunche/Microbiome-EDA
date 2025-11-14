@@ -1,5 +1,7 @@
 x4 = read_csv("100-runs-XGB.csv")
 
+filter(x4, species == "X.Clostridium..aldenense")
+
 x5 <- x4 |>
   group_by(species) |>
   summarise(
@@ -24,8 +26,23 @@ ggplot(x5, aes(tot)) +
 
 
 #it is so weird that is bimodal
-ggplot(filter(x4, species == "Klebsiella.oxytoca"), aes(`abs(shp_res_neg/shp_feat_pos)`)) + 
-  geom_histogram()
+spec = "X.Clostridium..aldenense"
+
+ggplot(filter(x4, species == spec), aes(`abs(shp_res_neg/shp_feat_pos)`)) + 
+  geom_histogram() + 
+  labs(
+    title = "Distribution of shap results divided by feature value",
+    subtitle =  spec,
+    x = "Shap results/feature value"
+  )
+
+ggplot(filter(x4, species == "Enterobacter.cloacae"), aes(`abs(shp_res_neg/shp_feat_pos)`)) + 
+  geom_histogram() + 
+  labs(
+    title = "Distribution of shap results divided by feature value",
+    subtitle = "Klebsiella Oxytoca",
+    x = "Shap results/feature value"
+  )
 
 ggplot(filter(x4, species == "Streptococcus.infantis"), aes(`abs(shp_res_neg/shp_feat_pos)`)) + 
   geom_histogram()
@@ -38,7 +55,32 @@ ggplot(x5, aes(tot)) +
 filter(x5, species == "Klebsiella.oxytoca")
 
 final = filter(x5, tot < 0.3 & n > 300)
+
 as.data.frame(filter(x5, cor < -0.4 & n > 300))
+other = filter(x5,  tot < 0.3 & n > 300 | cor < -0.4 & n > 400)
+
+final
+other
+
+for (x in other$species){
+  cors = cor.test(as.numeric(microbiomedata_t[1:495, x]), y = as.numeric(cdiff[1:495]), method = "spearman")
+  print(x)
+  print(cors)
+  species = c(species, x)
+  corrs = c(corrs, cors$estimate)
+  pvalue = c(pvalue, cors$p.value)
+}
+
+cor(microbiomedata_t$X.Clostridium..aldenense, microbiomedata_t$Clostridioides.difficile, method = "spearman")
+
+for (x in final$species){
+  print(x)
+  cor = cor.test(microbiomedata_t[, x], microbiomedata_t$Clostridioides.difficile, method = "spearman")
+  print(cors)
+  species = c(species, x)
+  corrs = c(corrs, cors$estimate)
+  pvalue = c(pvalue, cors$p.value)
+}
 
 as.data.frame(final)
 cor.test(microbiomedata_t$Bilophila.wadsworthia, microbiomedata_t$Clostridioides.difficile, method = "spearman")
