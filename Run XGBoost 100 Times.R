@@ -46,26 +46,21 @@ for (x in 1:500){
   print(x)
   
   set.seed(x)
-  train_index <- createDataPartition(a2$CDIFF_PRESENCE, p = 0.8, list = FALSE)
-  train_index
+  
   a2 = as.data.frame(a2)
   
-  X_train <- a2[train_index,]
-  y_train <- a2$CDIFF_PRESENCE[train_index]
-  X_test  <- a2[-train_index,]
-  y_test  <- a2$CDIFF_PRESENCE[-train_index]
+  X_train <- a2
+  y_train <- a2$CDIFF_PRESENCE
+
   
   X_train = dplyr::select(X_train, -CDIFF_PRESENCE)
-  X_test = dplyr::select(X_test, -CDIFF_PRESENCE)
-  
+
   class(X_train)
   
   X_train <- as.matrix(X_train)
-  X_test  <- as.matrix(X_test)
-  
+
   xgb_train <- xgb.DMatrix(data = X_train, label = y_train)
-  xgb_test  <- xgb.DMatrix(data = X_test, label = y_test)
-  
+
   params <- list(
     objective = "reg:squarederror",
     eval_metric = "rmse",
@@ -81,8 +76,7 @@ for (x in 1:500){
     params = params,
     data = xgb_train,
     nrounds = 100,
-    watchlist = list(train = xgb_train, test = xgb_test),
-    early_stopping_rounds = 10,
+    watchlist = list(train = xgb_train),
     verbose = 0
   )
   

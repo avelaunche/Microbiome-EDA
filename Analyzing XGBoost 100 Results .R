@@ -54,13 +54,13 @@ ggplot(x5, aes(tot)) +
 
 filter(x5, species == "Klebsiella.oxytoca")
 
-final = filter(x5, tot < 0.3 & n > 300)
+final = filter(x5, tot < 0.3 & n > 400)
 
-as.data.frame(filter(x5, cor < -0.4 & n > 300))
-other = filter(x5,  tot < 0.3 & n > 300 | cor < -0.4 & n > 400)
+as.data.frame(filter(x5, cor < -0.4 & n > 400))
 
 final
 other
+
 
 for (x in other$species){
   cors = cor.test(as.numeric(microbiomedata_t[1:495, x]), y = as.numeric(cdiff[1:495]), method = "spearman")
