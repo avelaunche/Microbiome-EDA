@@ -83,7 +83,7 @@ for (x in final$species){
 }
 
 as.data.frame(final)
-cor.test(microbiomedata_t$Bilophila.wadsworthia, microbiomedata_t$Clostridioides.difficile, method = "spearman")
+cor.test(microbiomedata_t$X.Clostridium..aldenense, microbiomedata_t$Clostridioides.difficile, method = "spearman")
 
 final
 other
