@@ -52,7 +52,8 @@ arrange(x5, desc(n))
 ggplot(x5, aes(tot)) + 
   geom_histogram()
 
-filter(x5, species == "Klebsiella.oxytoca")
+filter(x4, species == "Lactobacillus.paragasseri")
+filter(x5, species == "Lactobacillus.paragasseri")
 
 final = filter(x5, tot < 0.3 & n > 400)
 

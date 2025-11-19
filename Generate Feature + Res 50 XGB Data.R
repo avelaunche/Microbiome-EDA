@@ -37,7 +37,7 @@ a2
 a2$CDIFF_PRESENCE = a2$Clostridioides.difficile > 0
 a2 = dplyr::select(a2, -Clostridioides.difficile)
 
-x4 = mutate(x3, d = shp_res_neg + 1)
+x4 = mutate(x3, d = shp_res_pos + 1)
 x4$d = NULL
 
 nrow(x4)
@@ -90,6 +90,10 @@ for (x in 1:50){
   )
   
   target_list = final$species
+#  target_list = c("X.Clostridium..citroniae", "Eggerthella.lenta", "Eggerthella.sp..MP163B1", "Bacteroides.fragilis", "Blautia.coccoides", "Veillonella.atypica", "Lactobacillus.paragasseri", 
+#                  "Roseburia.inulinivorans", "Ruthenibacterium.lactatiformans", "Lachnoclostridium.sp..VE303.01", 
+#                  "X.Ruminococcus..sp..MP14G5", "Robinsoniella.peoriensis", "Roseburia.inulinivorans.CAG.15", "Streptomyces.californicus")
+
   
   shp_res = shp$S
   shp_feat = shp$X
@@ -125,7 +129,7 @@ long_feat_summary = long_feat |>
   group_by(sample, name) |>
   summarise(median(value))
 
-write.csv(long_feat_summary, "summary-50-xgboost-feat.csv")
-write.csv(long_res_summary, "summary-50-xgboost-res.csv")
+write.csv(long_feat_summary, "summary-50-xgboost-feat-pos.csv")
+write.csv(long_res_summary, "summary-50-xgboost-res-pos.csv")
 
 
