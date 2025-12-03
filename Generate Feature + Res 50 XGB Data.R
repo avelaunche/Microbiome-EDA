@@ -36,7 +36,7 @@ a2 = as.data.frame(a2)
 a2
 a2$CDIFF_PRESENCE = a2$Clostridioides.difficile > 0
 a2 = dplyr::select(a2, -Clostridioides.difficile)
-
+x3 = read_csv("100-runs-XGB-pos.csv")
 x4 = mutate(x3, d = shp_res_pos + 1)
 x4$d = NULL
 
@@ -129,7 +129,7 @@ long_feat_summary = long_feat |>
   group_by(sample, name) |>
   summarise(median(value))
 
-write.csv(long_feat_summary, "summary-50-xgboost-feat-pos.csv")
-write.csv(long_res_summary, "summary-50-xgboost-res-pos.csv")
+write.csv(long_feat_summary, "summary-50-xgboost-feat-neg.csv")
+write.csv(long_res_summary, "summary-50-xgboost-res-neg.csv")
 
 
