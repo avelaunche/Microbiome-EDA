@@ -5,6 +5,8 @@ sam_subset$sample = rownames(sam_subset)
 microbiomedata_t$sample = rownames(microbiomedata_t)
 
 df_f = right_join(sam_subset, microbiomedata_t)
+rownames(microbiomedata_t)
+sam_subset
 
 microbiomedata_t$sample = NULL
 
