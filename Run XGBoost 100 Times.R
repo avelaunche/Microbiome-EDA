@@ -37,10 +37,7 @@ a2
 a2$CDIFF_PRESENCE = a2$Clostridioides.difficile > 0
 a2 = dplyr::select(a2, -Clostridioides.difficile)
 
-x4 = mutate(x3, d = shp_res_neg + 1)
-x4$d = NULL
-
-nrow(x4)
+x4 = data.frame()
 
 for (x in 1:500){
   print(x)
